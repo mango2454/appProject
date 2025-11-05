@@ -25,7 +25,7 @@ const SignUpForm = () => {
 
     useEffect(() => {
       const SignupSubmit = () => {
-        const API_Signup = "localhost";
+        const API_Signup = "/register";
       };
     }, [signup]);
 
