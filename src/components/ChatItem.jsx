@@ -1,24 +1,50 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   TextInput,
   TouchableOpacity,
   Image,
   StyleSheet,
+  Text,
 } from 'react-native';
 
 const ChatItem = () => {
+  const [chat, setChat] = useState(''); // 현재 입력 중인 메시지
+  const [messages, setMessages] = useState([]); // 전송된 메시지 목록
+
+  const onChangeChat = text => {
+    setChat(text);
+  };
+
+  const onSendMessage = () => {
+    if (chat.trim()) {
+      // 빈 메시지 전송 방지
+      setMessages([...messages, chat]); // 메시지 목록에 추가
+      setChat(''); // 입력창 초기화
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* 채팅 메시지 영역 */}
       <View style={styles.messageContainer}>
-        {/* 여기에 채팅 메시지 컴포넌트 렌더링 예정 */}
+        {messages.map((message, index) => (
+          <View key={index} style={styles.messageBubble}>
+            <Text style={styles.messageText}>{message}</Text>
+          </View>
+        ))}
       </View>
 
       {/* 채팅 입력 영역 */}
       <View style={styles.inputContainer}>
-        <TextInput placeholder="채팅을 입력하세요" style={styles.input} />
-        <TouchableOpacity style={styles.sendButton}>
+        <TextInput
+          placeholder="채팅을 입력하세요"
+          style={styles.input}
+          value={chat}
+          onChangeText={onChangeChat}
+          onSubmitEditing={onSendMessage} // 키보드 엔터로도 전송
+        />
+        <TouchableOpacity style={styles.sendButton} onPress={onSendMessage}>
           <Image
             source={require('../../assets/images/Send.png')}
             style={styles.sendIcon}
@@ -32,19 +58,36 @@ const ChatItem = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5', // 전체 배경
+    backgroundColor: '#F5F5F5',
   },
   messageContainer: {
     flex: 1,
-    backgroundColor: '#E9F4FF', // 채팅 보여질 영역 배경
+    backgroundColor: '#E9F4FF',
     padding: 10,
+  },
+  messageBubble: {
+    backgroundColor: '#fff',
+    padding: 12,
+    borderRadius: 15,
+    marginBottom: 8,
+    alignSelf: 'flex-start',
+    maxWidth: '80%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  messageText: {
+    fontSize: 16,
+    color: '#333',
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 15,
     paddingVertical: 10,
-    marginBottom: 20, // 아래에서 살짝 띄움
+    marginBottom: 20,
     backgroundColor: '#fff',
     borderRadius: 30,
     marginHorizontal: 10,
@@ -52,7 +95,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3, // 안드로이드 그림자
+    elevation: 3,
   },
   input: {
     flex: 1,

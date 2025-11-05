@@ -3,9 +3,32 @@ import React from "react"
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 
+import { useState } from "react";
+
 
 
 const LoginForm = () => {
+
+  const [login, setLogin] = useState({
+    email: "",
+    password: ""
+  })
+
+  const onChangeEmail = (text) => {
+      setLogin({
+        ...login,
+        email:text
+      })
+  }
+
+
+  const onChangePassword = (text) => {
+    setLogin({
+      ...login,
+      password: text
+    })
+  }
+
 
   const navigation = useNavigation();
   const goChooseValue = () => {
@@ -25,6 +48,8 @@ const LoginForm = () => {
             <TextInput
               style={styles.form}
               placeholder="이메일을 입력하세요"
+              onChange={onChangeEmail}
+              value={login.id}
             ></TextInput>
           </View>
 
@@ -33,6 +58,8 @@ const LoginForm = () => {
             <TextInput
               style={styles.form}
               placeholder="비밀번호를 입력하세요"
+              onChange={onChangePassword}
+              value={login.password}
             ></TextInput>
           </View>
 

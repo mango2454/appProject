@@ -7,11 +7,16 @@ import {
   StyleSheet,
 } from 'react-native';
 
+import { useState } from 'react';
 
 
 const AiChatItem = () => {
 
+  const [ai, setAi] = useState("");
 
+  const onChangeAi = (text) => {
+    setAi(text)
+  }
 
   return (
     <View style={AiChatItemStyle.container}>
@@ -19,6 +24,8 @@ const AiChatItem = () => {
         <TextInput
           placeholder="채팅을 입력하세요"
           style={AiChatItemStyle.input}
+          onChange={onChangeAi}
+          value={ai}
         />
         <TouchableOpacity style={AiChatItemStyle.sendButton}>
           <Image

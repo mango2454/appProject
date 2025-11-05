@@ -2,10 +2,29 @@ import React from "react"
 
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
-
+import { useState } from "react";
 
 
 const MentorLogin = () => {
+
+
+  const [mentorLogin, setMentorLogin] = useState({
+    email: "",
+    password: ""
+  })
+
+  const MentorLoginEmail = (text) => {
+    setMentorLogin({
+      ...mentorLogin,
+      email: text,
+    })
+  }
+  const MentorLoginPassword = (text) => {
+    setMentorLogin({
+      ...mentorLogin,
+      password: text,
+    })
+  }
 
   const navigation = useNavigation();
   const goMentorList = () => {
@@ -25,6 +44,8 @@ const MentorLogin = () => {
             <TextInput
               style={styles.form}
               placeholder="이메일을 입력하세요"
+              onChange={MentorLoginEmail}
+              value={mentorLogin.email}
             ></TextInput>
           </View>
 
@@ -33,6 +54,8 @@ const MentorLogin = () => {
             <TextInput
               style={styles.form}
               placeholder="비밀번호를 입력하세요"
+              onChange={MentorLoginPassword}
+              value={mentorLogin.password}
             ></TextInput>
           </View>
 
