@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   TextInput,
@@ -6,11 +6,22 @@ import {
   Image,
   StyleSheet,
   Text,
+  ScrollView,
 } from 'react-native';
 
+// ⭐️ 외부 컴포넌트 임포트 (파일명이 'RightTalkContent.js'와 'LeftTalkContent.js'라고 가정)
+import RightTalkContent from './RightTalkContent';
+import LeftTalkContent from './leftTalkContent'; // ⭐️ 대문자로 수정하여 파일명 오류 방지
+
 const ChatItem = () => {
-  const [chat, setChat] = useState(''); // 현재 입력 중인 메시지
-  const [messages, setMessages] = useState([]); // 전송된 메시지 목록
+  const [chat, setChat] = useState('');
+  const [messages, setMessages] = useState([
+    { id: 1, text: '안녕하세요! 상대방 메시지입니다.', sender: 'other' },
+    { id: 2, text: '반갑습니다. 제가 보낸 메시지입니다.', sender: 'self' },
+  ]);
+
+  // ScrollView Ref 생성
+  const scrollViewRef = useRef(null);
 
   const onChangeChat = text => {
     setChat(text);
@@ -18,22 +29,42 @@ const ChatItem = () => {
 
   const onSendMessage = () => {
     if (chat.trim()) {
-      // 빈 메시지 전송 방지
-      setMessages([...messages, chat]); // 메시지 목록에 추가
-      setChat(''); // 입력창 초기화
+      const newMessage = {
+        id: Date.now(),
+        text: chat.trim(),
+        sender: 'self',
+      };
+
+      setMessages(prevMessages => [...prevMessages, newMessage]);
+      setChat('');
+    }
+  };
+
+  // 스크롤을 끝으로 이동시키는 함수
+  const scrollToBottom = () => {
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollToEnd({ animated: true });
+    }
+  };
+
+  const renderMessage = item => {
+    if (item.sender === 'self') {
+      return <RightTalkContent key={item.id} message={item.text} />;
+    } else {
+      return <LeftTalkContent key={item.id} message={item.text} />;
     }
   };
 
   return (
     <View style={styles.container}>
       {/* 채팅 메시지 영역 */}
-      <View style={styles.messageContainer}>
-        {messages.map((message, index) => (
-          <View key={index} style={styles.messageBubble}>
-            <Text style={styles.messageText}>{message}</Text>
-          </View>
-        ))}
-      </View>
+      <ScrollView
+        style={styles.messageContainer}
+        ref={scrollViewRef}
+        onContentSizeChange={scrollToBottom}
+      >
+        {messages.map(renderMessage)}
+      </ScrollView>
 
       {/* 채팅 입력 영역 */}
       <View style={styles.inputContainer}>
@@ -42,7 +73,7 @@ const ChatItem = () => {
           style={styles.input}
           value={chat}
           onChangeText={onChangeChat}
-          onSubmitEditing={onSendMessage} // 키보드 엔터로도 전송
+          onSubmitEditing={onSendMessage}
         />
         <TouchableOpacity style={styles.sendButton} onPress={onSendMessage}>
           <Image
@@ -58,29 +89,14 @@ const ChatItem = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    // ⭐️ 원래 스타일 유지: 전체 배경색
     backgroundColor: '#F5F5F5',
   },
   messageContainer: {
     flex: 1,
+    // ⭐️ 원래 스타일 복구: 메시지 영역 배경색
     backgroundColor: '#E9F4FF',
-    padding: 10,
-  },
-  messageBubble: {
-    backgroundColor: '#fff',
-    padding: 12,
-    borderRadius: 15,
-    marginBottom: 8,
-    alignSelf: 'flex-start',
-    maxWidth: '80%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  messageText: {
-    fontSize: 16,
-    color: '#333',
+    padding: 10, // 원래 스타일에서 복구
   },
   inputContainer: {
     flexDirection: 'row',
